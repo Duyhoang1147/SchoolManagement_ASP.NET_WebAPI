@@ -1,0 +1,60 @@
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.log
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# NuGet packages
+packages/
+*.nupkg
+*.snupkg
+
+# Visual Studio Code
+.vscode/
+
+# User-specific files
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Environment files
+appsettings.Development.json
+appsettings.Production.json
+*.env
+
+# Temp files
+[Tt]emp/
+*.tmp
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Others
+node_modules/
+bower_components/
+wwwroot/lib/
+.idea/
