@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagerment_WebAPI.Data;
 using SchoolManagerment_WebAPI.Model;
+using SchoolManagerment_WebAPI.Model.Dto;
 
 namespace SchoolManagerment_WebAPI.Service
 {
@@ -17,24 +18,59 @@ namespace SchoolManagerment_WebAPI.Service
             _context = context;
         }
 
-        public async Task<List<TeacherClassroom>> GetAllTeacherClassroomsAsync()
+        public async Task<List<TeacherClassroomDto>> GetAllTeacherClassroomsAsync()
         {
-            return await _context.TeacherClassrooms.OrderBy(tc => tc.TeacherId).ToListAsync();
+            return await _context.TeacherClassrooms
+                    .Include(i => i.Classroom )
+                    .Include(i => i.Teacher)
+                    .Select(tc => new TeacherClassroomDto
+                    {
+                        Teacher = tc.Teacher != null ? tc.Teacher.Fullname : null,
+                        Subject = tc.Teacher != null ? tc.Teacher.Subject : null,
+                        Classroom = tc.Classroom != null ? tc.Classroom.Name : null
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
         }
 
-        public async Task<List<TeacherClassroom>> GetTeacherClassroomByTeacherIdAsync(Guid id)
+        public async Task<TeacherClassroomListClassroomDto> GetTeacherClassroomByTeacherIdAsync(Guid id)
         {
-            return await _context.TeacherClassrooms.Where(tc => tc.TeacherId == id).ToListAsync();
+            var classrooms = await _context.TeacherClassrooms
+                .Where(tc => tc.TeacherId == id)
+                .Select(tc => new ClassroomGetDto
+                {
+                    Id = tc.ClassroomId,
+                    Name = tc.Classroom != null ? tc.Classroom.Name : null
+                })
+                .ToListAsync();
+            return new TeacherClassroomListClassroomDto { ClassroomId = classrooms };
         }
 
-        public async Task<List<TeacherClassroom>> GetTeacherClassroomByClassroomIdAsync(Guid id)
+        public async Task<ClassroomListDto> GetTeacherClassroomByClassroomIdAsync(Guid id)
         {
-            return await _context.TeacherClassrooms.Where(tc => tc.ClassroomId == id).ToListAsync();
+            var ListTeacher = await _context.TeacherClassrooms
+                .Include(i => i.Teacher)
+                .Where(tc => tc.ClassroomId == id)
+                .Select(tc => new TeacherGetDto
+                {
+                    Id = tc.TeacherId,
+                    Fullname = tc.Teacher != null ? tc.Teacher.Fullname : null,
+                    Email = tc.Teacher != null ? tc.Teacher.Email : null,
+                    Subject = tc.Teacher != null ? tc.Teacher.Subject : null
+                })
+                .ToListAsync();
+            return new ClassroomListDto { TeacherId = ListTeacher };
         }
 
-        public async Task<TeacherClassroom> CreateTeacherClassroomAsync(TeacherClassroom teacherClassroom)
+        public async Task<TeacherClassroomCreateDto> CreateTeacherClassroomAsync(TeacherClassroomCreateDto teacherClassroom)
         {
-            _context.TeacherClassrooms.Add(teacherClassroom);
+            var newTeacherClassroom = new TeacherClassroom
+            {
+                TeacherId = teacherClassroom.TeacherId,
+                ClassroomId = teacherClassroom.ClassroomId
+            };
+
+            _context.TeacherClassrooms.Add(newTeacherClassroom);
             await _context.SaveChangesAsync();
             return teacherClassroom;
         }

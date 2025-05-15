@@ -51,7 +51,7 @@ namespace SchoolManagerment_WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTeacher(Guid id, [FromBody] TeacherGetDto teacher)
         {
-            if (teacher == null || id != teacher.Id)
+            if (teacher == null)
             {
                 return BadRequest();
             }

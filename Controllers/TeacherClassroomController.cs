@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SchoolManagerment_WebAPI.Data;
 using SchoolManagerment_WebAPI.Model;
+using SchoolManagerment_WebAPI.Model.Dto;
 using SchoolManagerment_WebAPI.Service;
 
 namespace SchoolManagerment_WebAPI.Controllers
@@ -32,7 +31,7 @@ namespace SchoolManagerment_WebAPI.Controllers
         public async Task<IActionResult> GetTeacherClassroomByTeacherId(Guid id)
         {
             var teacherClassrooms = await _service.GetTeacherClassroomByTeacherIdAsync(id);
-            if (teacherClassrooms == null || !teacherClassrooms.Any())
+            if (teacherClassrooms == null)
             {
                 return NotFound();
             }
@@ -43,7 +42,7 @@ namespace SchoolManagerment_WebAPI.Controllers
         public async Task<IActionResult> GetTeacherClassroomByClassroomId(Guid id)
         {
             var teacherClassrooms = await _service.GetTeacherClassroomByClassroomIdAsync(id);
-            if (teacherClassrooms == null || !teacherClassrooms.Any())
+            if (teacherClassrooms == null)
             {
                 return NotFound();
             }
@@ -51,7 +50,7 @@ namespace SchoolManagerment_WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTeacherClassroom([FromBody] TeacherClassroom teacherClassroom)
+        public async Task<IActionResult> CreateTeacherClassroom([FromBody] TeacherClassroomCreateDto teacherClassroom)
         {
             if (teacherClassroom == null)
             {
